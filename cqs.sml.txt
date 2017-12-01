@@ -1,0 +1,71 @@
+
+ 1. Using one of the sources in the [ML learning guide](../readings/ml.html),
+    read about structures, signatures, and matching.  Then answer
+    questions about the structure and signature below.
+
+    The following structure contains definitions that should be
+    familiar from the [ML homework](ml.html) and from code you may
+    have seen in the course interpreters:
+
+        structure ExposedEnv = struct
+          type name   = string
+          type 'a env = (name * 'a) list
+          exception NotFound of name
+          val emptyEnv = []
+
+          fun lookup (name, [])              = raise NotFound name
+            | lookup (name, (x, v) :: pairs) =
+                if x = name then v else lookup (name, pairs)
+
+          fun bindVar (name, value, env) = (name, value) :: env
+        end
+
+    Here is a signature:
+
+        signature ENV = sig
+          type name = string
+          type 'a env
+          val emptyEnv : 'a env
+          val lookup   : name * 'a env -> 'a
+          val bindVar  : name * 'a * 'a env -> 'a env
+        end
+
+    Answer these questions:
+
+    (a) Does the signature match the structure?  That is, if we write
+
+            structure Env :> ENV = ExposedEnv
+
+        does the resulting code typecheck?  Please answer yes or no.
+
+
+    For the following questions, assume that some structure `Env` that
+    matches the `ENV` signature is available.
+
+    (b) Does the signature expose enough information for us to write
+        the following function?  Please answer yes or no.
+
+            fun extendEnv (names, vals, rho) =
+              ListPair.foldrEq Env.bindVar rho (names, vals)
+
+    (c) Does the signature expose enough information for us to write
+        the following function?  Please answer yes or no.
+
+            fun isBound (name, rho) = (Env.lookup (name,rho) ; true) 
+                                      handle Env.NotFound _ => false
+
+    (d) If in part (b) or part (c) it is not possible to write the
+        function given, pick an appropriate option from below. If it
+        is already possible to write both functions without further
+        changes, pick option 4. Pick exactly one option.
+
+        1. Change the type of `bindVar` to `name -> 'a -> 'a env -> 'a env`
+        2. Add `exception NotFound of name` in the `ENV` signature
+        3. Change the type of `lookup` to `name * 'a env -> unit`
+        4. Already possible
+
+    You now have the basic ideas needed to understand what is being
+    asked of you in this assignment, and you know enough to implement
+    most of the "tic-tac-toe" game ([problem S](#tic)).
+
+   
