@@ -19,16 +19,16 @@ structure TTT :> GAME = struct
    	fun prompt (player) = "Square for Player" ^ Player.toString(player) ^ "?"
 
    	fun toString player (x, y) = "Player " ^ Player.toString(player) ^ 
-   		"moves to row " ^ Int.toString(x) ^ "and column " ^ Int.toString(y) ^ "."
+   		" moves to row " ^ Int.toString(x) ^ " and column " ^ Int.toString(y) ^ "."
   end
   
   fun toString (board, player) = 
-  		Char.toString(Option.valOf(Vector.sub(board, 0))) ^ "|" ^ Char.toString(Option.valOf(Vector.sub(board, 1))) ^ "|" ^Char.toString(Option.valOf(Vector.sub(board, 2))) ^ "\n"
-  		^ "---+---+---\n" ^
-  		Char.toString(Option.valOf(Vector.sub(board, 3))) ^ "|" ^ Char.toString(Option.valOf(Vector.sub(board, 4))) ^ "|" ^Char.toString(Option.valOf(Vector.sub(board, 5))) ^ "\n"
-  		^ "---+---+---\n" ^
-  		Char.toString(Option.valOf(Vector.sub(board, 6))) ^ "|" ^ Char.toString(Option.valOf(Vector.sub(board, 7))) ^ "|" ^Char.toString(Option.valOf(Vector.sub(board, 8))) ^ "\n"
-  		^ "Player " ^ Player.toString(player) ^ "'s turn to move"
+    Vector.foldli (fn (i, x, xs) => if (i mod 3) = 0 andalso Option.isSome(x) then xs ^ "| " ^ Char.toString(Option.valOf(Vector.sub(board, i))) ^ " "
+                                        else if (i mod 3) = 0 andalso not (Option.isSome(x)) then xs ^ "|   "
+                                        else if (i mod 3) = 1 andalso Option.isSome(x) then xs ^ "| " ^ Char.toString(Option.valOf(Vector.sub(board, i))) ^ " "
+                                        else if (i mod 3) = 1 andalso not (Option.isSome(x)) then xs ^ "|   "
+                                        else if (i mod 3) = 2 andalso Option.isSome(x) then xs ^"| " ^ Char.toString(Option.valOf(Vector.sub(board, i))) ^ " |\n ---+---+---\n"
+                                        else xs ^ "|   |\n ---+---+---\n") "\n ---+---+---\n" board
 
   fun initial (player) = (Vector.tabulate(9, (fn (n) => NONE)), player)
 
